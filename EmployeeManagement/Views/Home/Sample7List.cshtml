@@ -1,0 +1,41 @@
+﻿@using EmployeeManagement.Logic
+@model EmployeeModel
+@using PagedList.Mvc
+@using EmployeeManagement.Helpers
+@using EmployeeManagement.Model
+
+@{
+    int count = Model.Filters.Count() + 1;
+    int id = Model.Table == null ? 0 : Model.Table.Id;
+    int TotalCount = Model.dynamicList.Count();
+}
+
+<div class="row text-center mg-0">
+    @Html.Hidden("hdnTotalCount", TotalCount)
+
+    @if (Model != null && Model.dynamicList.Count() > 0)
+    {
+        foreach (var item in Model.dynamicList)
+        {
+            <div class="col-sm-6 col-md-3">
+                <div class="thumbnail hdnOverflow zoomIn animated">
+                    <img src="~/Content/Images/preview.jpg" alt="thumbnail" class="" onclick="ShowThumbImage(this);" />
+                    <div class="fadeIn animated">
+                        <h4>@item.Name</h4>
+                        <p><strong><a href="mailto:@item.Email"> @item.Email</a></strong></p>
+                        <p>
+                            @{ var columnValue = string.IsNullOrEmpty(Convert.ToString(item.BirthDate)) ? "" : Convert.ToDateTime(item.BirthDate).ToString("dddd dd MMMM yyyy");}
+
+                            @if (columnValue != "")
+                            {@columnValue
+                            }
+                            else
+                            { @Html.Raw("&nbsp;")}
+                        </p>
+                        <button class="btn btn-success" onclick="ShowThumbImage(this);">Show Model</button>
+                    </div>
+                </div>
+            </div>
+                                    }
+                                }
+</div>

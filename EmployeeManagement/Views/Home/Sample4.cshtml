@@ -1,0 +1,127 @@
+﻿@using EmployeeManagement.Logic
+@using EmployeeManagement.Helpers
+@model EmployeeModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Html.Partial("_FilterMenu")
+
+<div class="row header-title">
+    <div class="title">Sample 4 - Custom Grid with Each Column filter, paging, sorting and CRUD operation  </div>
+    <hr class="hr-tp-0" />
+</div>
+
+<div class="row pd-bt-10">
+    <div class="col-md-3 pd-0 btnmrg">
+        <button id="btnAdd" type="button" title="Add New" class="btnCRUD btn btn-theme"><i class="glyphicon glyphicon-plus"></i></button>
+        <button id="btnEdit" type="button" title="Edit" class="btnCRUD btn btn-theme "><i class="glyphicon glyphicon-pencil"></i></button>
+        @*<button id="btnDelete" type="button" title="Delete" class="btnCRUD btn btn-primary "><i class="glyphicon glyphicon-trash"></i></button>*@
+    </div>
+    <div class="col-md-9 font-14">
+        <div id="lblmsg"></div>
+    </div>
+</div>
+
+<div class="row" id="Sample4List">
+    @Html.Partial("Sample4List", Model)
+</div>
+
+@* Add model after main div where model used in main div for CRUD Operation model for getting tablelist id *@
+<div id="dvModel" class="modal fadeInDown animated draggable-modal modal-scroll" tabindex="-1" data-backdrop="static" data-keyboard="false">
+</div>
+
+@section scripts{
+    <link href="~/Content/animate.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery.datetimepicker.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.datetimepicker.full.js"></script>
+
+    <script src="~/Scripts/Common.js"></script>
+    <script type="text/javascript">
+        rootUrl = "@Url.Content("~/")";
+        var ControllerName = "Home"; var ActionName = "Sample4FilterSearch"; var tableList = "Sample4List"; var tableName = "tblSample4";//For Grid
+        var dvModel = "dvModel"; var frnName = "frmEmployee";
+
+        //Initialize add/edit/delete function
+        $(function () {
+            InitAddEditDeleteFunctions();
+        });
+        function InitAddEditDeleteFunctions() {
+            var url = rootUrl + ControllerName + "/AddEditEmployee";
+            var deleteUrl = rootUrl + ControllerName + "/DeleteEmployee";
+            AddItem("btnAdd", tableName, url, JSON.stringify({ "Id": 0 }), "dvModel");//Add Item - Common.js
+            EditSelectedItem("btnEdit", tableName, url, JSON.stringify({ "Id": "[replaceid]" }), "dvModel");//Edit Selected Item - Common.js
+            var jsonText = JSON.stringify({ "Id": "[replaceid]", fieldName: setFieldName, sortOrder: setSortorder, 'StaticPageSize': 10 });
+            DeleteSelectedItem("btnDelete", tableName, deleteUrl, jsonText, "Sample4List");//Delete Selected Item - Common.js
+        }
+
+        function InitCheckboxAndDoubleClick() {
+            var url = rootUrl + ControllerName + "/AddEditEmployee";
+            CheckboxCheck(tableName);//Checkbox Select - Common.js
+            //EditItem On Double Click - Common.js
+            EditItemOnDoubleClick(tableName, url, JSON.stringify({ "Id": "[replaceid]" }), "dvModel");
+        }
+        function SaveSuccess(tableHtml) {
+            $("#" + tableList).html(tableHtml);
+            $('#' + dvModel).modal('hide');
+            bindGridEvent(tableName); //initialize grid functions
+
+            //highlight row after add/update
+            var chkVal = $("#hdnRowupdateIndex").val();
+            var chk = $('input:checkbox[value=' + chkVal + ']');
+            //if (chk != null) { chk.closest("tr").effect("highlight", { color: "#F6E824" }, 3500); }
+            var $rows = '';
+            if (chk != null) { $rows = chk.closest("tr"); $rows.addClass("highlight"); }
+            setTimeout(function () { $rows.removeClass("highlight"); }, 2000);
+
+            ShowMessage("lblmsg", "Employee successfuly saved.", "success");
+        }
+        function OnFailure(msg) {
+            if (msg.statusText == "exists") {
+                ShowMessage("lblpopmsg", "Employee Name already exists.", "error");
+            }
+        }
+        function CloseModelPopup() {
+            $("#btnCloseModel").click(function () {
+                $('#' + dvModel).modal('hide');
+            });
+        }
+        function formValidation() {
+            $("#" + frnName).validate({
+                rules: {
+                    "Table.Name": "required",
+                    "Table.Email": { required: true, email: true },
+                    "Table.Salary": { number: true }//, min: 2, max: 50 }
+                },
+                messages: {
+                    "Table.Name": "",
+                    "Table.Email": { required: "", email: "" },
+                    "Table.Salary": { number: "" }//, min: "*", max: "*" }
+                },
+                errorElement: "div",
+                errorClass: "has-error help-inline"
+            });
+        }
+        function SetDatepicker(id) {
+            $(".datepicker").each(function () {
+                var id = $(this).attr("id");
+                $(this).datetimepicker({ format: 'Y-m-d H:i', step: 30 });
+                if ($("#btn_" + id) != null) {
+                    $("#btn_" + id).click(function () {
+                        $('#' + id).datetimepicker('show');
+                    });
+                }
+            });
+        }
+
+        function DropDownChange($this) {//grid header filter dropdown change
+            Search(ControllerName, ActionName, tableList, tableName);
+        }
+    </script>
+    @*start Grid paging/Sorting*@
+    <script>
+        bindGridEvent(tableName);
+        FilterCondition("condition", ControllerName, ActionName, tableList, tableName);
+    </script>
+}
+
+

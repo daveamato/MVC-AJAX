@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajaxify Custom grid and thmbnail views</title>
+    @Styles.Render("~/Content/css")
+    @*<link href="~/Content/bootstrap.css" rel="stylesheet" />*@
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-default">
+        <div class="container1">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="@Url.Action("Index","Home")">LOGO</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right cursor">
+                    @*<li><a onclick="ChnageView('tableview');" class="disabled viewmode tableview" >Table View</a></li>
+                    <li><a onclick="ChnageView('thumbview');" class="viewmode thumbview">Thumb View</a></li>
+                    <li><a onclick="ChnageView('semithumbview');" class="viewmode semithumbview">Semi Thumb View</a></li>
+                    <li><a onclick="ChnageView('infinitescroll');" class="viewmode infinitescroll">Infinite Scroll</a></li>*@
+                    <li> <a id="Index" href="@Url.Action("Index","Home")">Home</a></li>
+                    <li> <a id="Sample1" href="@Url.Action("Sample1","Home")">Sample 1</a></li>
+                    <li> <a id="Sample2" href="@Url.Action("Sample2","Home")">Sample 2</a></li>
+                    <li> <a id="Sample3" href="@Url.Action("Sample3","Home")">Sample 3</a></li>
+                    <li> <a id="Sample4" href="@Url.Action("Sample4","Home")">Sample 4</a></li>
+                    <li> <a id="Sample5" href="@Url.Action("Sample5","Home")">Sample 5</a></li>
+                    <li> <a id="Sample6" href="@Url.Action("Sample6","Home")">Sample 6</a></li>
+                    <li> <a id="Sample7" href="@Url.Action("Sample7","Home")">Sample 7</a></li>
+                    <li> <a id="Sample8" href="@Url.Action("Sample8","Home")">Sample 8</a></li>
+                    <li> <a id="Sample9" href="@Url.Action("Sample9","Home")">Sample 9</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div id="lblmainmsg" class="hide" style="padding: 6px;"></div>
+        <div id="loadingpnl" class="loader"></div>
+
+
+
+        @RenderBody()
+    </div>
+    <!-- Footer -->
+    <footer class="container-fluid text-center footer">
+        <span>Created By Bhavesh Patel</span>
+    </footer>
+
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+    
+    @RenderSection("scripts", required: false)
+
+    <link href="~/Content/style.css" rel="stylesheet" />
+    <script>
+        //Loading Panel Show/Hide
+        var _cnt = 0;
+        $(document).ajaxSend(function (event, jqXHR, settings) {
+            if (!settings.url.match("EmployeeInfiniteScroll") && !settings.url.match("Sample7FilterSearch") && !settings.url.match("Sample9FilterSearch")) {
+                if (_cnt == 0) {
+                    $("#loadingpnl").show();
+                }
+            }
+            _cnt++;
+        }).ajaxComplete(function () {
+            _cnt--;
+            if (_cnt == 0)
+                $("#loadingpnl").hide();
+        });
+        //$.ajaxSetup({ cache: false });
+        //End
+        $(function () {            
+            highlightActiveMenu();
+        });
+
+        function highlightActiveMenu() {
+            $("ul.navbar-nav li a").removeClass('active');
+            var currentController = '@ViewContext.RouteData.Values["controller"].ToString().ToLower()';            
+            $('ul.navbar-nav li a').each(function () {
+                var menu = $(this).attr("id").toString().toLowerCase();
+                var currentAction = '@ViewContext.RouteData.Values["action"].ToString().ToLower()';               
+                if (currentAction.indexOf(menu) > -1) {
+                    $(this).addClass('active');
+                }
+            });
+        };
+
+        function ShowMessage($dvMsg, $msg, $type) {
+            var $class = '';
+            if ($type == 'success')
+            { $class = 'bold  text-success'; $msg = "<i class='font-14 glyphicon glyphicon-ok-circle'></i>  " + $msg; }
+            else if ($type == 'error')
+            { $class = 'bold  text-danger'; $msg = "<i class='font-14 glyphicon glyphicon-remove-circle'></i>  " + $msg; }
+            else if ($type == 'warning')
+            { $class = 'bold text-warning'; $msg = "<i class='font-14 glyphicon glyphicon-warning'></i>  " + $msg; }
+            else if ($type == 'info')
+            { $class = 'bold text-info'; $msg = "<i class='font-14 glyphicon glyphicon-info-circle'></i>  " + $msg; }
+
+            $("#" + $dvMsg).html($msg);
+            $("#" + $dvMsg).removeClass().addClass($class).show('slow').animate({ opacity: 1.0 }, 5000).fadeOut('slow');
+            //$obj.html($msg).removeClass().addClass($class).show('slow').animate({ opacity: 1.0 }, 8000).fadeOut('slow');
+        }
+
+        function HideMessage($this, $dvMsg) {
+            $("#" + $dvMsg + "Text").empty();
+            if ($this != null && $this != '') //for hide alert message on click on close button
+                $($this).parents('div#' + $dvMsg).hide('slow');
+            else
+                $("#" + $dvMsg).hide('slow'); //for hide alert message when reopen page
+        }
+
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+﻿@using EmployeeManagement.Logic
+@using EmployeeManagement.Helpers
+@model EmployeeModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row header-title">
+    <div class="title">Sample 2 - Custom Grid with paging and sorting</div>
+    <hr class="hr-tp-0" />
+</div>
+
+<div class="row" id="Sample2List">
+    @Html.Partial("Sample2List", Model)
+</div>
+
+@section scripts{
+    <script src="~/Scripts/Common.js"></script>
+
+}
+
+

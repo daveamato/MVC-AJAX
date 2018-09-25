@@ -1,0 +1,138 @@
+﻿@using EmployeeManagement.Logic
+@model EmployeeModel
+@using PagedList.Mvc
+@using EmployeeManagement.Helpers
+@using EmployeeManagement.Model
+
+@{
+    int count = Model.Filters.Count() + 1;
+    int id = Model.Table == null ? 0 : Model.Table.Id;
+}
+
+<div class="table-responsive table-bordered thumbview" id="tblSample8">
+    <div class="row mg-0">
+        @if (Model != null && Model.dynamicList.Count() != 0)
+        {
+            <div class="fixed-table-pagination col-sm-6 col-md-12 header-title">
+                <div class="pull-left">
+                    @Html.PagedListPager(new PagedList.StaticPagedList<dynamic>(Model.dynamicList, Model.dynamicListMetaData), page => Url.Action("Sample8FilterSearch", new
+               {
+                   page,
+                   pageSize = Model.dynamicListMetaData.PageSize,
+                   TotalItemCount = Model.dynamicListMetaData.TotalItemCount,
+                   CurrentPage = Model.dynamicListMetaData.PageNumber,
+                   sortOrder = Model.sortOrder,
+                   fieldName = Model.fieldName,
+                   IsShowControls = true,
+                   IsShowFirstLast = true,
+                   IsShowPages = true,
+                   ViewType = Model.ViewType
+               }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new MyThumbViewRenderOptions(), new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "Sample8List" }))
+
+                </div>
+                <div class="pull-right pagination1 pagination-detail">
+                    <span class="btn-group dropup">
+                        <span class="pagination">
+                            <select id="ddlThumbnailSort" class="form-control input-sm input-xsmall input-inline select" onchange="OnThumbnailSortChange();">
+                                <option @(Model.SortNameType == "Name_ASC" ? "selected" : "" ) value="Name_ASC">Name</option>
+                                <option @(Model.SortNameType == "Name_DESC" ? "selected" : "" ) value="Name_DESC">Name Desc</option>
+                                <option @(Model.SortNameType == "Email_ASC" ? "selected" : "" ) value="Email_ASC">Email</option>
+                                <option @(Model.SortNameType == "Email_DESC" ? "selected" : "" ) value="Email_DESC">Email Desc</option>
+                                <option @(Model.SortNameType == "CityName_ASC" ? "selected" : "" ) value="CityName_ASC">City</option>
+                                <option @(Model.SortNameType == "CityName_DESC" ? "selected" : "" ) value="CityName_DESC">City Desc</option>
+                                <option @(Model.SortNameType == "Salary_ASC" ? "selected" : "" ) value="Salary_ASC">Salary</option>
+                                <option @(Model.SortNameType == "Salary_DESC" ? "selected" : "" ) value="Salary_DESC">Salary Desc</option>
+                                <option @(Model.SortNameType == "BirthDate_ASC" ? "selected" : "" ) value="BirthDate_ASC">BirthDate</option>
+                                <option @(Model.SortNameType == "BirthDate_DESC" ? "selected" : "" ) value="BirthDate_DESC">BirthDate Desc</option>
+                            </select>
+                        </span>
+                    </span>
+                    <span class="btn-group dropup">
+                        <span class="pagination select">
+                            @Html.PagerDropdownForThumbnail(Model.dynamicListMetaData.PageSize, "Sample8FilterSearch", "Home", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Sample8List" }, new { sortOrder = Model.sortOrder, fieldName = Model.fieldName }, null, Model.StaticPageSize)
+                            <input type="hidden" id="hdnoldPagesize" value="@Model.dynamicListMetaData.PageSize" />
+                        </span>
+                    </span>
+                    <span class="pagination-info">
+                        Showing @(Model.dynamicListMetaData.FirstItemOnPage) to @(Model.dynamicListMetaData.LastItemOnPage) of @(Model.dynamicListMetaData.TotalItemCount) items
+                    </span>
+                </div>
+            </div>
+        }
+    </div>
+
+    <hr class="hr-tp-0" />
+
+    <div class="row mg-0">
+        @Html.Hidden("hdnParamNames", "Home|Sample8FilterSearch|Sample8List|tblSample8")@*Ex:  ControllerName|ActionName|tableList|tableName*@
+        @if (Model != null && Model.dynamicList.Count() > 0)
+        {
+            foreach (var item in Model.dynamicList)
+            {
+                <div class="media col-md-12">
+                    <div class="col-md-4 pd-lt-0 semithumbnail cursor">
+                        <img src="~/Content/Images/preview.jpg" alt="thumbnail" class="pulse animated" onclick="ShowSemiThumbImage(this);" />
+                    </div>
+                    <div class="media-body hdnOverflow slideInRight animated ">
+                        <h4 class="media-heading"><strong> @item.Name</strong></h4>
+                        <p><strong><a href="mailto:@item.Email"> @item.Email</a></strong></p>
+                        <p>
+                            @{ var columnValue = string.IsNullOrEmpty(Convert.ToString(item.BirthDate)) ? "" : Convert.ToDateTime(item.BirthDate).ToString("dddd dd MMMM yyyy");
+                            }
+                            @if (columnValue != "")
+                            {@columnValue
+                            }
+                            else
+                            { @Html.Raw("&nbsp;")}
+                        </p>
+                        <p class="text-right header-title"><i class="glyphicon glyphicon-user"></i>  By Bhavesh Patel</p>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam sit amet vulputate.
+                            Quisque mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis dolor, in sagittis nisi.
+                        </p>
+                        <button class="btn btn-success" onclick="ShowSemiThumbImage(this);">Show Model</button>
+                        <hr />
+                    </div>
+                </div>
+                }
+            }
+            else
+            {
+                    <div>
+                        No data
+                    </div>
+                }
+    </div>
+
+    <hr class="hr-tp-bt-0" />
+    <div class="row mg-0">
+        @if (Model != null && Model.dynamicList.Count() != 0)
+        {
+            <div class="fixed-table-pagination col-sm-6 col-md-12">
+                <div class="pull-left">
+                    @Html.PagedListPager(new PagedList.StaticPagedList<dynamic>(Model.dynamicList, Model.dynamicListMetaData), page => Url.Action("Sample8FilterSearch", new
+               {
+                   page,
+                   pageSize = Model.dynamicListMetaData.PageSize,
+                   TotalItemCount = Model.dynamicListMetaData.TotalItemCount,
+                   CurrentPage = Model.dynamicListMetaData.PageNumber,
+                   sortOrder = Model.sortOrder,
+                   fieldName = Model.fieldName,
+                   IsShowControls = true,
+                   IsShowFirstLast = true,
+                   IsShowPages = true,
+                   ViewType = Model.ViewType
+               }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new MyThumbViewRenderOptions(), new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "Sample8List" }))
+
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<script>
+    if (typeof SortSetting == 'function') {
+        SortSetting('@(Model.sortOrder == null ? "" : Model.sortOrder)', '@(Model.fieldName == null ? "" : Model.fieldName)');
+    }
+</script>

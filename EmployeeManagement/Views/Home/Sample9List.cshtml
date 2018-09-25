@@ -1,0 +1,48 @@
+﻿@using EmployeeManagement.Logic
+@model EmployeeModel
+@using PagedList.Mvc
+@using EmployeeManagement.Helpers
+@using EmployeeManagement.Model
+
+@{
+    int count = Model.Filters.Count() + 1;
+    int id = Model.Table == null ? 0 : Model.Table.Id;
+    int TotalCount = Model.dynamicList.Count();
+}
+
+<div class="row mg-0">
+    @Html.Hidden("hdnTotalCount", TotalCount)
+
+    @if (Model != null && Model.dynamicList.Count() > 0)
+    {
+        foreach (var item in Model.dynamicList)
+        {
+            <div class="media col-md-12">
+                @*<div class="pull-left semithumbnail cursor">*@
+                <div class="col-md-4 pd-lt-0 semithumbnail cursor">
+                    <img src="~/Content/Images/preview.jpg" alt="thumbnail" class="zoomIn animated" onclick="ShowSemiThumbImage(this);" />
+                </div>
+                <div class="media-body hdnOverflow zoomIn animated ">
+                    <h4 class="media-heading"><strong> @item.Name</strong></h4>
+                    <p><strong><a href="mailto:@item.Email"> @item.Email</a></strong></p>
+                    <p>
+                        @{ var columnValue = string.IsNullOrEmpty(Convert.ToString(item.BirthDate)) ? "" : Convert.ToDateTime(item.BirthDate).ToString("dddd dd MMMM yyyy");
+                        }
+                        @if (columnValue != "")
+                        {@columnValue
+                        }
+                        else
+                        { @Html.Raw("&nbsp;")}
+                    </p>
+                    <p class="text-right header-title"><i class="glyphicon glyphicon-user"></i>  By Bhavesh Patel</p>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam sit amet vulputate.
+                        Quisque mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis dolor, in sagittis nisi.
+                    </p>
+                    <button class="btn btn-success" onclick="ShowSemiThumbImage(this);">Show Model</button>
+                    <hr />
+                </div>
+            </div>
+                                }
+                            }
+</div>

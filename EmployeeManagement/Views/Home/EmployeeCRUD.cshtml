@@ -1,0 +1,110 @@
+﻿@using EmployeeManagement.Logic
+@model EmployeeModel
+
+@{
+    Layout = null;
+}
+
+@using (Ajax.BeginForm("SaveEmployee", "Home", "", new AjaxOptions() { HttpMethod = "POST", OnBegin = "beforePage", OnSuccess = "SaveSuccess", OnFailure = "OnFailure" }, new { id = "frmEmployee", data_tablename = "tblSample4" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close"
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">
+                    @if (Model.Table.Id > 0)
+                    {@Html.Raw("Update Employee") }
+                    else
+                    { @Html.Raw("Add Employee")}
+                </h4>
+            </div>
+            <div class="modal-body">
+                <!-- BEGIN FORM-->
+                <div class="form-horizontal">
+                    <div class="form-body">
+                        <div class="form-group col-md-12">
+                            <div id="lblpopmsg" class="hide" style="padding: 6px;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.HiddenFor(d => d.Table.Id)
+                            @Html.HiddenFor(d => d.Table.CreatedDate)
+                            <label class="col-md-3 control-label1">Name</label>
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(d => d.Table.Name, new { @class = "form-control " })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label1">Email</label>
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(d => d.Table.Email, new { @class = "form-control " })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label1">City Name</label>
+                            <div class="col-md-8">
+                                @Html.DropDownListFor(d => d.Table.CityID, Model.CityList, "[None]", new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label1">Salary</label>
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(d => d.Table.Salary, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label1">Birth Date</label>
+                            <div class="col-md-8 input-group pd-lt-rt-15px">
+                                @*MMM dd, yyyy HH:mm*@
+                                @{
+                                    var birthDate = "";
+                                    if (Model.Table != null && Model.Table.BirthDate != null)
+                                    {
+                                        birthDate = Model.Table.BirthDate.Value.ToString("yyyy-MM-dd hh:mm");
+                                    }
+                                }
+                                @Html.TextBoxFor(m => m.Table.BirthDate, String.Format("{0:d}", birthDate), new { @class = "form-control datepicker input-inline input-medium" })
+
+                                <a id="btn_Table_BirthDate" class="ui-datepicker-trigger input-group-addon btn btn-theme">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label1">IsActive</label>
+                            <div class="col-md-8">
+                                @{Model.Table.IsActive = Model.Table.IsActive.HasValue ? Model.Table.IsActive : false; }
+                                @Html.CheckBoxFor(d => d.Table.IsActive.Value, new { Name = "Table.IsActive" })
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-theme"><i class="glyphicon glyphicon-check"></i> Submit</button>
+                        <button id="btnCloseModel" type="button" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i> Cancel</button>
+                    </div>
+                </div>
+                <!-- END FORM-->
+            </div>
+        </div>
+    </div>
+  }
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(function () {
+            $("#dvTitle").html("Employee Detail");
+        });
+
+    </script>
+}
