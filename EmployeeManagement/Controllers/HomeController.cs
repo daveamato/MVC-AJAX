@@ -13,7 +13,7 @@ namespace EmployeeManagement.Controllers
 {
     public class HomeController : Controller
     {
-        CommonFunction common = new CommonFunction();
+        readonly CommonFunction common = new CommonFunction();
 
         public ActionResult Index()
         {
@@ -207,7 +207,7 @@ namespace EmployeeManagement.Controllers
                         flgDelete = true;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     flgDeleteError = true;
                 }
@@ -326,7 +326,8 @@ namespace EmployeeManagement.Controllers
 
             context.setModel(query, objModel, colName, "Name", page, pageSize);
         }
-        protected string RenderPartialViewToString(string viewName, object model)
+
+        private string RenderPartialViewToString(string viewName, object model)
         {
             if (string.IsNullOrEmpty(viewName))
                 viewName = ControllerContext.RouteData.GetRequiredString("action");
